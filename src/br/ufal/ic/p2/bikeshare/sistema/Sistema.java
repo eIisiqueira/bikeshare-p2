@@ -7,6 +7,8 @@ import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.exception.ValidacaoException;
 import br.ufal.ic.p2.bikeshare.model.Estacao;
 import br.ufal.ic.p2.bikeshare.model.Plano;
+import br.ufal.ic.p2.bikeshare.model.bicicleta.Bicicleta;
+import br.ufal.ic.p2.bikeshare.model.bicicleta.TipoBicicleta;
 import br.ufal.ic.p2.bikeshare.model.pagamento.TipoMetodoPagamento;
 import br.ufal.ic.p2.bikeshare.model.usuario.Usuario;
 import br.ufal.ic.p2.bikeshare.model.usuario.UsuarioPessoaFisica;
@@ -32,6 +34,7 @@ public class Sistema implements Serializable {
     private final Configuracao config = new Configuracao();
     private final Map<String, Usuario> usuarios = new LinkedHashMap<>();
     private final Map<String, Estacao> estacoes = new LinkedHashMap<>();
+    private final Map<String, Bicicleta> bicicletas = new LinkedHashMap<>();
     private final Map<String, Plano> planos = new LinkedHashMap<>();
     private int proximoUsuario = 1;
     private int proximaEstacao = 1;
@@ -212,7 +215,40 @@ public class Sistema implements Serializable {
         return id;
     }
 
-    // ====================================================================== US7 - disponibilidade
+    // ====================================================================== US6 / US7 - bicicletas
+
+    /**
+     * Cadastra uma bicicleta numa estação. Os dados da bicicleta são validados antes da vaga.
+     *
+     * @param nivelBateria {@code null} quando o comando não informa bateria
+     */
+    public void adicionarBicicleta(String idEstacao, String idBicicleta, String tipo, String nivelBateria) {
+        Estacao estacao = buscarEstacao(idEstacao);
+        Validador.obrigatorio(idBicicleta, Mensagens.ID_BICICLETA_NULO);
+        if (bicicletas.containsKey(idBicicleta)) {
+            throw new RegraDeNegocioException(Mensagens.BICICLETA_JA_EXISTE);
+        }
+        Bicicleta bicicleta = TipoBicicleta.criar(tipo, idBicicleta, nivelBateria);
+        estacao.cadastrar(bicicleta);
+        bicicletas.put(idBicicleta, bicicleta);
+    }
+
+    /** Remove a bicicleta do sistema; o mesmo id pode ser cadastrado de novo depois. */
+    public void removerBicicleta(String idEstacao, String idBicicleta) {
+        Estacao estacao = buscarEstacao(idEstacao);
+        Bicicleta bicicleta = buscarBicicleta(idBicicleta);
+        estacao.validarPossui(bicicleta);
+        estacao.liberar(bicicleta);
+        bicicletas.remove(bicicleta.getId());
+    }
+
+    public String getAtributoBicicleta(String idBicicleta, String atributo) {
+        return buscarBicicleta(idBicicleta).getAtributo(atributo);
+    }
+
+    public String getEstadoBicicleta(String idBicicleta) {
+        return buscarBicicleta(idBicicleta).getEstado().toString();
+    }
 
     public int getBicicletasDisponiveis(String idEstacao) {
         return buscarEstacao(idEstacao).contarDisponiveis(config);
@@ -230,6 +266,10 @@ public class Sistema implements Serializable {
 
     private Estacao buscarEstacao(String id) {
         return buscar(estacoes, id, Mensagens.ID_ESTACAO_NULO, Mensagens.ESTACAO_NAO_EXISTE);
+    }
+
+    private Bicicleta buscarBicicleta(String id) {
+        return buscar(bicicletas, id, Mensagens.ID_BICICLETA_NULO, Mensagens.BICICLETA_NAO_EXISTE);
     }
 
     private static <T> T buscar(Map<String, T> mapa, String id, String mensagemIdNulo, String mensagemNaoExiste) {

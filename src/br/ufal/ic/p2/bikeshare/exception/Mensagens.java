@@ -11,8 +11,10 @@ public final class Mensagens {
     // ---- identificação / existência ----
     public static final String ID_USUARIO_NULO = "Identificacao do usuario nao pode ser nula.";
     public static final String ID_ESTACAO_NULO = "Identificacao da estacao nao pode ser nula.";
+    public static final String ID_BICICLETA_NULO = "Identificacao da bicicleta nao pode ser nula.";
     public static final String USUARIO_NAO_EXISTE = "Usuario nao existe.";
     public static final String ESTACAO_NAO_EXISTE = "Estacao nao existe.";
+    public static final String BICICLETA_NAO_EXISTE = "Bicicleta nao existe.";
     public static final String ATRIBUTO_NAO_EXISTE = "Atributo nao existe.";
     public static final String ATRIBUTO_NAO_ALTERAVEL = "Atributo nao pode ser alterado.";
 
@@ -54,4 +56,13 @@ public final class Mensagens {
     public static final String CAPACIDADE_NULA = "Capacidade nao pode ser nula.";
     public static final String CAPACIDADE_NAO_NUMERICA = "Capacidade deve ser numerica.";
     public static final String CAPACIDADE_NAO_POSITIVA = "Capacidade deve ser positiva.";
+    public static final String ESTACAO_SEM_VAGAS = "Estacao sem vagas disponiveis.";
+
+    // ---- bicicleta ----
+    public static final String BICICLETA_JA_EXISTE = "Bicicleta ja existe.";
+    public static final String BICICLETA_FORA_DA_ESTACAO = "Bicicleta nao esta nesta estacao.";
+    public static final String SEM_BATERIA = "Bicicleta nao possui bateria.";
+    public static final String BATERIA_NULA = "Nivel de bateria nao pode ser nulo.";
+    public static final String BATERIA_NAO_NUMERICA = "Nivel de bateria deve ser numerico.";
+    public static final String BATERIA_FORA_DO_INTERVALO = "Nivel de bateria deve estar entre 0 e 100.";
 }

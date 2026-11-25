@@ -87,19 +87,19 @@ public class Facade {
     // =====================================================================
 
     public void adicionarBicicleta(String estacao, String bicicleta, String tipo) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        sistema.adicionarBicicleta(estacao, bicicleta, tipo, null);
     }
 
     public void adicionarBicicleta(String estacao, String bicicleta, String tipo, String nivelBateria) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        sistema.adicionarBicicleta(estacao, bicicleta, tipo, nivelBateria);
     }
 
     public void removerBicicleta(String estacao, String bicicleta) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        sistema.removerBicicleta(estacao, bicicleta);
     }
 
     public String getAtributoBicicleta(String bicicleta, String atributo) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return sistema.getAtributoBicicleta(bicicleta, atributo);
     }
 
     // =====================================================================
@@ -115,7 +115,7 @@ public class Facade {
     }
 
     public String getEstadoBicicleta(String bicicleta) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return sistema.getEstadoBicicleta(bicicleta);
     }
 
     // =====================================================================
