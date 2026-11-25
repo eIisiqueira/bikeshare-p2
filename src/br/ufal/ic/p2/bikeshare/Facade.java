@@ -21,21 +21,21 @@ public class Facade {
     // =====================================================================
 
     public String criarUsuario(String nome, String email, String senha, String tipo, String cpfOuCnpj) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return sistema.criarUsuarioPessoaFisica(nome, email, senha, tipo, cpfOuCnpj, null, null);
     }
 
     public String criarUsuario(String nome, String email, String senha, String tipo, String cnpj, String razaoSocial) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return sistema.criarUsuarioPessoaJuridica(nome, email, senha, tipo, cnpj, razaoSocial, null, null);
     }
 
     public String criarUsuario(String nome, String email, String senha, String tipo, String cpf,
                                 String plano, String mensalidade) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return sistema.criarUsuarioPessoaFisica(nome, email, senha, tipo, cpf, plano, mensalidade);
     }
 
     public String criarUsuario(String nome, String email, String senha, String tipo, String cnpj,
                                 String razaoSocial, String plano, String mensalidade) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return sistema.criarUsuarioPessoaJuridica(nome, email, senha, tipo, cnpj, razaoSocial, plano, mensalidade);
     }
 
     // =====================================================================
@@ -43,7 +43,7 @@ public class Facade {
     // =====================================================================
 
     public String getAtributoUsuario(String usuario, String atributo) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return sistema.getAtributoUsuario(usuario, atributo);
     }
 
     public String getUsuarioPorEmail(String email) {
