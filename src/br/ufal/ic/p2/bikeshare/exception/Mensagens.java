@@ -10,7 +10,9 @@ public final class Mensagens {
 
     // ---- identificação / existência ----
     public static final String ID_USUARIO_NULO = "Identificacao do usuario nao pode ser nula.";
+    public static final String ID_ESTACAO_NULO = "Identificacao da estacao nao pode ser nula.";
     public static final String USUARIO_NAO_EXISTE = "Usuario nao existe.";
+    public static final String ESTACAO_NAO_EXISTE = "Estacao nao existe.";
     public static final String ATRIBUTO_NAO_EXISTE = "Atributo nao existe.";
     public static final String ATRIBUTO_NAO_ALTERAVEL = "Atributo nao pode ser alterado.";
 
@@ -46,4 +48,10 @@ public final class Mensagens {
     public static final String VALOR_NULO = "Valor nao pode ser nulo.";
     public static final String VALOR_NAO_NUMERICO = "Valor deve ser numerico.";
     public static final String VALOR_NAO_POSITIVO = "Valor deve ser positivo.";
+
+    // ---- estação ----
+    public static final String ENDERECO_NULO = "Endereco nao pode ser nulo.";
+    public static final String CAPACIDADE_NULA = "Capacidade nao pode ser nula.";
+    public static final String CAPACIDADE_NAO_NUMERICA = "Capacidade deve ser numerica.";
+    public static final String CAPACIDADE_NAO_POSITIVA = "Capacidade deve ser positiva.";
 }

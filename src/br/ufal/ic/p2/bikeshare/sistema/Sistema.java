@@ -5,6 +5,7 @@ import br.ufal.ic.p2.bikeshare.exception.EntidadeNaoEncontradaException;
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
 import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.exception.ValidacaoException;
+import br.ufal.ic.p2.bikeshare.model.Estacao;
 import br.ufal.ic.p2.bikeshare.model.Plano;
 import br.ufal.ic.p2.bikeshare.model.pagamento.TipoMetodoPagamento;
 import br.ufal.ic.p2.bikeshare.model.usuario.Usuario;
@@ -30,8 +31,10 @@ public class Sistema implements Serializable {
 
     private final Configuracao config = new Configuracao();
     private final Map<String, Usuario> usuarios = new LinkedHashMap<>();
+    private final Map<String, Estacao> estacoes = new LinkedHashMap<>();
     private final Map<String, Plano> planos = new LinkedHashMap<>();
     private int proximoUsuario = 1;
+    private int proximaEstacao = 1;
 
     public Sistema() {
         registrarPlano(new Plano("avulso", 0, config.getTarifaMinutoAvulso(), null));
@@ -193,10 +196,40 @@ public class Sistema implements Serializable {
         usuarios.remove(u.getId());
     }
 
+    // ====================================================================== US5 - estação
+
+    /** Cadastra uma estação. Validação na ordem: nome, endereço, capacidade (inteiro positivo). */
+    public String criarEstacao(String nome, String endereco, String capacidade) {
+        Validador.obrigatorio(nome, Mensagens.NOME_NULO);
+        Validador.obrigatorio(endereco, Mensagens.ENDERECO_NULO);
+        Validador.obrigatorio(capacidade, Mensagens.CAPACIDADE_NULA);
+        int vagas = Validador.inteiro(capacidade, Mensagens.CAPACIDADE_NAO_NUMERICA);
+        if (vagas <= 0) {
+            throw new ValidacaoException(Mensagens.CAPACIDADE_NAO_POSITIVA);
+        }
+        String id = "E" + proximaEstacao++;
+        estacoes.put(id, new Estacao(id, nome, endereco, vagas));
+        return id;
+    }
+
+    // ====================================================================== US7 - disponibilidade
+
+    public int getBicicletasDisponiveis(String idEstacao) {
+        return buscarEstacao(idEstacao).contarDisponiveis(config);
+    }
+
+    public int getVagasDisponiveis(String idEstacao) {
+        return buscarEstacao(idEstacao).getVagasLivres();
+    }
+
     // ====================================================================== buscas
 
     private Usuario buscarUsuario(String id) {
         return buscar(usuarios, id, Mensagens.ID_USUARIO_NULO, Mensagens.USUARIO_NAO_EXISTE);
+    }
+
+    private Estacao buscarEstacao(String id) {
+        return buscar(estacoes, id, Mensagens.ID_ESTACAO_NULO, Mensagens.ESTACAO_NAO_EXISTE);
     }
 
     private static <T> T buscar(Map<String, T> mapa, String id, String mensagemIdNulo, String mensagemNaoExiste) {
