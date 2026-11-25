@@ -1,6 +1,10 @@
 package br.ufal.ic.p2.bikeshare.model.pagamento;
 
+import br.ufal.ic.p2.bikeshare.exception.AtributoInvalidoException;
+import br.ufal.ic.p2.bikeshare.exception.Mensagens;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Forma de pagamento do usuário.
@@ -14,4 +18,20 @@ public abstract class MetodoPagamento implements Serializable {
 
     /** Token exibido em {@code getAtributoUsuario ... atributo=metodoPagamento}. */
     public abstract String getNome();
+
+    public String getNumeroCartao() {
+        throw new AtributoInvalidoException(Mensagens.NAO_USA_CARTAO);
+    }
+
+    public String getValidadeCartao() {
+        throw new AtributoInvalidoException(Mensagens.NAO_USA_CARTAO);
+    }
+
+    public String getChavePix() {
+        throw new AtributoInvalidoException(Mensagens.NAO_USA_PIX);
+    }
+
+    public BigDecimal getSaldo() {
+        throw new AtributoInvalidoException(Mensagens.NAO_USA_SALDO);
+    }
 }

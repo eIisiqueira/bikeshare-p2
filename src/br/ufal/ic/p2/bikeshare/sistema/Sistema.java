@@ -136,6 +136,15 @@ public class Sistema implements Serializable {
         return buscarUsuario(idUsuario).getAtributo(atributo);
     }
 
+    public String getUsuarioPorEmail(String email) {
+        Validador.obrigatorio(email, Mensagens.EMAIL_NULO);
+        Usuario u = procurarPorEmail(email);
+        if (u == null) {
+            throw new EntidadeNaoEncontradaException(Mensagens.USUARIO_NAO_EXISTE);
+        }
+        return u.getId();
+    }
+
     // ====================================================================== buscas
 
     private Usuario buscarUsuario(String id) {

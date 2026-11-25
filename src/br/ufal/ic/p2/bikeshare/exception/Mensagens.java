@@ -32,4 +32,9 @@ public final class Mensagens {
     public static final String MENSALIDADE_NULA = "Mensalidade nao pode ser nula.";
     public static final String MENSALIDADE_NAO_NUMERICA = "Mensalidade deve ser numerica.";
     public static final String MENSALIDADE_NEGATIVA = "Mensalidade deve ser nao-negativa.";
+
+    // ---- método de pagamento ----
+    public static final String NAO_USA_CARTAO = "Usuario nao usa cartao.";
+    public static final String NAO_USA_PIX = "Usuario nao usa pix.";
+    public static final String NAO_USA_SALDO = "Usuario nao usa saldo pre-carregado.";
 }

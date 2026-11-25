@@ -30,6 +30,7 @@ public abstract class Usuario implements Serializable {
     private BigDecimal mensalidade;
     private MetodoPagamento metodoPagamento = new SemMetodoPagamento();
     private EstadoUsuario estado = EstadoUsuario.ATIVO;
+    private BigDecimal pendencias = BigDecimal.ZERO;
 
     protected Usuario(String id, String nome, String email, String senha, Plano plano, BigDecimal mensalidade) {
         this.id = id;
@@ -64,6 +65,7 @@ public abstract class Usuario implements Serializable {
         return switch (atributo) {
             case "nome" -> nome;
             case "email" -> email;
+            case "senha" -> senha;
             case "tipo" -> getTipo();
             case "estado" -> estado.toString();
             case "plano" -> plano.getNome();
@@ -72,6 +74,12 @@ public abstract class Usuario implements Serializable {
             case "cnpj" -> getCnpj();
             case "razaoSocial" -> getRazaoSocial();
             case "metodoPagamento" -> metodoPagamento.getNome();
+            case "numeroCartao" -> metodoPagamento.getNumeroCartao();
+            case "validadeCartao" -> metodoPagamento.getValidadeCartao();
+            case "chavePix" -> metodoPagamento.getChavePix();
+            case "saldo" -> Formatador.dinheiro(metodoPagamento.getSaldo());
+            case "aluguelAtivo" -> "nenhum"; // aluguéis chegam na US8
+            case "totalPendencias" -> Formatador.dinheiro(pendencias);
             default -> throw new AtributoInvalidoException(Mensagens.ATRIBUTO_NAO_EXISTE);
         };
     }
