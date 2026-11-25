@@ -186,6 +186,13 @@ public class Sistema implements Serializable {
         u.setMetodoPagamento(TipoMetodoPagamento.criar(metodo, u, dados));
     }
 
+    // ====================================================================== US4 - remoção
+
+    public void removerUsuario(String idUsuario) {
+        Usuario u = buscarUsuario(idUsuario);
+        usuarios.remove(u.getId());
+    }
+
     // ====================================================================== buscas
 
     private Usuario buscarUsuario(String id) {
