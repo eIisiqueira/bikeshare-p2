@@ -12,6 +12,7 @@ public final class Mensagens {
     public static final String ID_USUARIO_NULO = "Identificacao do usuario nao pode ser nula.";
     public static final String USUARIO_NAO_EXISTE = "Usuario nao existe.";
     public static final String ATRIBUTO_NAO_EXISTE = "Atributo nao existe.";
+    public static final String ATRIBUTO_NAO_ALTERAVEL = "Atributo nao pode ser alterado.";
 
     // ---- usuário ----
     public static final String NOME_NULO = "Nome nao pode ser nulo.";
@@ -34,7 +35,15 @@ public final class Mensagens {
     public static final String MENSALIDADE_NEGATIVA = "Mensalidade deve ser nao-negativa.";
 
     // ---- método de pagamento ----
+    public static final String METODO_PAGAMENTO_INVALIDO = "Valor de metodo de pagamento invalido.";
     public static final String NAO_USA_CARTAO = "Usuario nao usa cartao.";
     public static final String NAO_USA_PIX = "Usuario nao usa pix.";
     public static final String NAO_USA_SALDO = "Usuario nao usa saldo pre-carregado.";
+    public static final String NUMERO_CARTAO_NULO = "Numero do cartao nao pode ser nulo.";
+    public static final String VALIDADE_CARTAO_NULA = "Validade do cartao nao pode ser nula.";
+    public static final String VALIDADE_CARTAO_INVALIDA = "Validade do cartao invalida.";
+    public static final String CHAVE_PIX_NULA = "Chave pix nao pode ser nula.";
+    public static final String VALOR_NULO = "Valor nao pode ser nulo.";
+    public static final String VALOR_NAO_NUMERICO = "Valor deve ser numerico.";
+    public static final String VALOR_NAO_POSITIVO = "Valor deve ser positivo.";
 }

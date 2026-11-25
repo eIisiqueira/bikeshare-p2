@@ -4,6 +4,7 @@ import br.ufal.ic.p2.bikeshare.exception.AtributoInvalidoException;
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
 import br.ufal.ic.p2.bikeshare.model.Plano;
 import br.ufal.ic.p2.bikeshare.model.pagamento.MetodoPagamento;
+import br.ufal.ic.p2.bikeshare.model.pagamento.SaldoPreCarregado;
 import br.ufal.ic.p2.bikeshare.model.pagamento.SemMetodoPagamento;
 import br.ufal.ic.p2.bikeshare.util.Formatador;
 
@@ -29,6 +30,8 @@ public abstract class Usuario implements Serializable {
     /** Mensalidade contratada; {@code null} se o plano não tem mensalidade. */
     private BigDecimal mensalidade;
     private MetodoPagamento metodoPagamento = new SemMetodoPagamento();
+    /** Carteira guardada mesmo quando o usuário troca para outro método, para não perder o saldo. */
+    private SaldoPreCarregado carteira;
     private EstadoUsuario estado = EstadoUsuario.ATIVO;
     private BigDecimal pendencias = BigDecimal.ZERO;
 
@@ -91,8 +94,34 @@ public abstract class Usuario implements Serializable {
         return mensalidade;
     }
 
+    /**
+     * Troca de plano. Escolher o plano atual não muda nada (preserva a mensalidade contratada);
+     * outro plano entra com a mensalidade padrão dele.
+     */
+    public void alterarPlano(Plano novo) {
+        if (novo == plano) {
+            return;
+        }
+        plano = novo;
+        mensalidade = novo.getMensalidadePadrao();
+    }
+
+    /** Carteira de saldo do usuário, criada na primeira vez que é escolhida. */
+    public SaldoPreCarregado getCarteira() {
+        if (carteira == null) {
+            carteira = new SaldoPreCarregado();
+        }
+        return carteira;
+    }
+
     // ---------------------------------------------------------------- getters/setters simples
 
     public String getId() { return id; }
     public String getEmail() { return email; }
+    public MetodoPagamento getMetodoPagamento() { return metodoPagamento; }
+
+    public void setNome(String nome) { this.nome = nome; }
+    public void setEmail(String email) { this.email = email; }
+    public void setSenha(String senha) { this.senha = senha; }
+    public void setMetodoPagamento(MetodoPagamento metodoPagamento) { this.metodoPagamento = metodoPagamento; }
 }

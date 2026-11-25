@@ -34,4 +34,9 @@ public abstract class MetodoPagamento implements Serializable {
     public BigDecimal getSaldo() {
         throw new AtributoInvalidoException(Mensagens.NAO_USA_SALDO);
     }
+
+    /** Recarga de saldo; só o saldo pré-carregado aceita. */
+    public void recarregar(String valor) {
+        throw new AtributoInvalidoException(Mensagens.NAO_USA_SALDO);
+    }
 }

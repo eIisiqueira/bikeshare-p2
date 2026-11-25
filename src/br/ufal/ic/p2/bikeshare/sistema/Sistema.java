@@ -1,10 +1,12 @@
 package br.ufal.ic.p2.bikeshare.sistema;
 
+import br.ufal.ic.p2.bikeshare.exception.AtributoInvalidoException;
 import br.ufal.ic.p2.bikeshare.exception.EntidadeNaoEncontradaException;
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
 import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.exception.ValidacaoException;
 import br.ufal.ic.p2.bikeshare.model.Plano;
+import br.ufal.ic.p2.bikeshare.model.pagamento.TipoMetodoPagamento;
 import br.ufal.ic.p2.bikeshare.model.usuario.Usuario;
 import br.ufal.ic.p2.bikeshare.model.usuario.UsuarioPessoaFisica;
 import br.ufal.ic.p2.bikeshare.model.usuario.UsuarioPessoaJuridica;
@@ -143,6 +145,45 @@ public class Sistema implements Serializable {
             throw new EntidadeNaoEncontradaException(Mensagens.USUARIO_NAO_EXISTE);
         }
         return u.getId();
+    }
+
+    // ====================================================================== US3 - alteração
+
+    /**
+     * Altera um atributo simples (nome, email, senha, plano), recarrega saldo ({@code saldo})
+     * ou escolhe saldo pré-carregado ({@code metodoPagamento} sem dados extras).
+     * Cada ramo valida antes de alterar: uma alteração recusada não muda nada.
+     */
+    public void alterarUsuario(String idUsuario, String atributo, String valor) {
+        Usuario u = buscarUsuario(idUsuario);
+        switch (atributo) {
+            case "nome" -> u.setNome(Validador.obrigatorio(valor, Mensagens.NOME_NULO));
+            case "email" -> {
+                validarEmailLivre(valor, u);
+                u.setEmail(valor);
+            }
+            case "senha" -> u.setSenha(Validador.obrigatorio(valor, Mensagens.SENHA_NULA));
+            case "plano" -> u.alterarPlano(buscarPlano(valor));
+            case "saldo" -> u.getMetodoPagamento().recarregar(valor);
+            case "metodoPagamento" -> alterarMetodoPagamento(u, valor);
+            default -> throw new AtributoInvalidoException(Mensagens.ATRIBUTO_NAO_ALTERAVEL);
+        }
+    }
+
+    /**
+     * Altera o método de pagamento com dados extras (pix: chave; cartão: número e validade).
+     * Só o atributo {@code metodoPagamento} aceita esse formato de comando.
+     */
+    public void alterarUsuario(String idUsuario, String atributo, String metodo, String... dados) {
+        Usuario u = buscarUsuario(idUsuario);
+        if (!"metodoPagamento".equals(atributo)) {
+            throw new AtributoInvalidoException(Mensagens.ATRIBUTO_NAO_ALTERAVEL);
+        }
+        alterarMetodoPagamento(u, metodo, dados);
+    }
+
+    private void alterarMetodoPagamento(Usuario u, String metodo, String... dados) {
+        u.setMetodoPagamento(TipoMetodoPagamento.criar(metodo, u, dados));
     }
 
     // ====================================================================== buscas
