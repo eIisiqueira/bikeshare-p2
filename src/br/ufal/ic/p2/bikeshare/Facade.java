@@ -1,11 +1,20 @@
 package br.ufal.ic.p2.bikeshare;
 
+import br.ufal.ic.p2.bikeshare.sistema.Persistencia;
+import br.ufal.ic.p2.bikeshare.sistema.Sistema;
+
 /**
- Facade
+ * Ponto único de entrada do BIKESHARE (RNF BS01), chamado pelos scripts do EasyAccept.
+ * <p>
+ * A Facade só adapta: recebe as strings do comando, escolhe a operação certa do
+ * {@link Sistema} e devolve o resultado como string. Nenhuma regra de negócio fica aqui.
+ * Ao ser criada, recarrega o estado salvo pela execução anterior.
  */
 public class Facade {
 
     private static final String AINDA_NAO_IMPLEMENTADO = "Ainda não implementado.";
+
+    private Sistema sistema = Persistencia.carregar();
 
     // =====================================================================
     // US1 - Cadastro de usuario
@@ -193,11 +202,14 @@ public class Facade {
     // Ciclo de vida do sistema
     // =====================================================================
 
+    /** Descarta todo o estado (memória e arquivo salvo) e recomeça os contadores de id. */
     public void zerarSistema() {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        sistema = new Sistema();
+        Persistencia.apagar();
     }
 
+    /** Salva o estado atual em disco para a próxima execução. */
     public void encerrarSistema() {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        Persistencia.salvar(sistema);
     }
 }
