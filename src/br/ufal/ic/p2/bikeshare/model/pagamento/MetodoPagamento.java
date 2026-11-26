@@ -39,4 +39,8 @@ public abstract class MetodoPagamento implements Serializable {
     public void recarregar(String valor) {
         throw new AtributoInvalidoException(Mensagens.NAO_USA_SALDO);
     }
+
+    /** Verifica se o usuário pode iniciar uma corrida com este método. Padrão: pode. */
+    public void validarRetirada() {
+    }
 }

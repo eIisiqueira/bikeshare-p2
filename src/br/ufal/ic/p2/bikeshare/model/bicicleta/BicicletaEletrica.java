@@ -1,5 +1,7 @@
 package br.ufal.ic.p2.bikeshare.model.bicicleta;
 
+import br.ufal.ic.p2.bikeshare.exception.Mensagens;
+import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.sistema.Configuracao;
 
 /**
@@ -29,6 +31,14 @@ public class BicicletaEletrica extends Bicicleta {
     @Override
     public boolean estaDisponivel(Configuracao config) {
         return super.estaDisponivel(config) && temBateriaSuficiente(config);
+    }
+
+    @Override
+    public void validarRetirada(Configuracao config) {
+        super.validarRetirada(config);
+        if (!temBateriaSuficiente(config)) {
+            throw new RegraDeNegocioException(Mensagens.BATERIA_INSUFICIENTE);
+        }
     }
 
     private boolean temBateriaSuficiente(Configuracao config) {

@@ -2,6 +2,8 @@ package br.ufal.ic.p2.bikeshare.model.usuario;
 
 import br.ufal.ic.p2.bikeshare.exception.AtributoInvalidoException;
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
+import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
+import br.ufal.ic.p2.bikeshare.model.Aluguel;
 import br.ufal.ic.p2.bikeshare.model.Plano;
 import br.ufal.ic.p2.bikeshare.model.pagamento.MetodoPagamento;
 import br.ufal.ic.p2.bikeshare.model.pagamento.SaldoPreCarregado;
@@ -10,6 +12,8 @@ import br.ufal.ic.p2.bikeshare.util.Formatador;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Usuário do BIKESHARE. Concentra tudo o que pessoa física e jurídica têm em comum
@@ -34,6 +38,8 @@ public abstract class Usuario implements Serializable {
     private SaldoPreCarregado carteira;
     private EstadoUsuario estado = EstadoUsuario.ATIVO;
     private BigDecimal pendencias = BigDecimal.ZERO;
+    private Aluguel aluguelAtivo;
+    private final List<Aluguel> historico = new ArrayList<>();
 
     protected Usuario(String id, String nome, String email, String senha, Plano plano, BigDecimal mensalidade) {
         this.id = id;
@@ -81,7 +87,7 @@ public abstract class Usuario implements Serializable {
             case "validadeCartao" -> metodoPagamento.getValidadeCartao();
             case "chavePix" -> metodoPagamento.getChavePix();
             case "saldo" -> Formatador.dinheiro(metodoPagamento.getSaldo());
-            case "aluguelAtivo" -> "nenhum"; // aluguéis chegam na US8
+            case "aluguelAtivo" -> aluguelAtivo == null ? "nenhum" : aluguelAtivo.getId();
             case "totalPendencias" -> Formatador.dinheiro(pendencias);
             default -> throw new AtributoInvalidoException(Mensagens.ATRIBUTO_NAO_EXISTE);
         };
@@ -114,11 +120,37 @@ public abstract class Usuario implements Serializable {
         return carteira;
     }
 
+    // ---------------------------------------------------------------- aluguel
+
+    /**
+     * Regras do usuário para iniciar uma corrida: não pode estar inadimplente nem ter outra em andamento.
+     *
+     * @throws RegraDeNegocioException com a mensagem específica
+     */
+    public void validarInicioDeAluguel() {
+        if (estado == EstadoUsuario.INADIMPLENTE) {
+            throw new RegraDeNegocioException(Mensagens.USUARIO_INADIMPLENTE);
+        }
+        if (temAluguelEmAndamento()) {
+            throw new RegraDeNegocioException(Mensagens.USUARIO_JA_TEM_ALUGUEL);
+        }
+    }
+
+    public boolean temAluguelEmAndamento() {
+        return aluguelAtivo != null;
+    }
+
+    public void iniciarAluguel(Aluguel aluguel) {
+        aluguelAtivo = aluguel;
+        historico.add(aluguel);
+    }
+
     // ---------------------------------------------------------------- getters/setters simples
 
     public String getId() { return id; }
     public String getEmail() { return email; }
     public MetodoPagamento getMetodoPagamento() { return metodoPagamento; }
+    public List<Aluguel> getHistorico() { return historico; }
 
     public void setNome(String nome) { this.nome = nome; }
     public void setEmail(String email) { this.email = email; }

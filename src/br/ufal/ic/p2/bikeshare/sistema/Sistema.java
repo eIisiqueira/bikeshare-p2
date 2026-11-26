@@ -5,6 +5,7 @@ import br.ufal.ic.p2.bikeshare.exception.EntidadeNaoEncontradaException;
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
 import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.exception.ValidacaoException;
+import br.ufal.ic.p2.bikeshare.model.Aluguel;
 import br.ufal.ic.p2.bikeshare.model.Estacao;
 import br.ufal.ic.p2.bikeshare.model.Plano;
 import br.ufal.ic.p2.bikeshare.model.bicicleta.Bicicleta;
@@ -13,10 +14,12 @@ import br.ufal.ic.p2.bikeshare.model.pagamento.TipoMetodoPagamento;
 import br.ufal.ic.p2.bikeshare.model.usuario.Usuario;
 import br.ufal.ic.p2.bikeshare.model.usuario.UsuarioPessoaFisica;
 import br.ufal.ic.p2.bikeshare.model.usuario.UsuarioPessoaJuridica;
+import br.ufal.ic.p2.bikeshare.util.Datas;
 import br.ufal.ic.p2.bikeshare.util.Validador;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,9 +38,11 @@ public class Sistema implements Serializable {
     private final Map<String, Usuario> usuarios = new LinkedHashMap<>();
     private final Map<String, Estacao> estacoes = new LinkedHashMap<>();
     private final Map<String, Bicicleta> bicicletas = new LinkedHashMap<>();
+    private final Map<String, Aluguel> alugueis = new LinkedHashMap<>();
     private final Map<String, Plano> planos = new LinkedHashMap<>();
     private int proximoUsuario = 1;
     private int proximaEstacao = 1;
+    private int proximoAluguel = 1;
 
     public Sistema() {
         registrarPlano(new Plano("avulso", 0, config.getTarifaMinutoAvulso(), null));
@@ -196,6 +201,9 @@ public class Sistema implements Serializable {
 
     public void removerUsuario(String idUsuario) {
         Usuario u = buscarUsuario(idUsuario);
+        if (u.temAluguelEmAndamento()) {
+            throw new RegraDeNegocioException(Mensagens.USUARIO_COM_ALUGUEL);
+        }
         usuarios.remove(u.getId());
     }
 
@@ -258,6 +266,41 @@ public class Sistema implements Serializable {
         return buscarEstacao(idEstacao).getVagasLivres();
     }
 
+    // ====================================================================== US8 - retirada
+
+    /**
+     * Inicia um aluguel. Ordem das verificações: dados de entrada → usuário (inadimplência,
+     * aluguel em andamento) → bicicleta na estação → bicicleta pode sair (estado, bateria)
+     * → método de pagamento. Só depois de tudo validado o estado é alterado.
+     *
+     * @return id do aluguel (A1, A2, ...)
+     */
+    public String retirarBicicleta(String idUsuario, String idEstacao, String idBicicleta, String data) {
+        Usuario usuario = buscarUsuario(idUsuario);
+        Estacao estacao = buscarEstacao(idEstacao);
+        Bicicleta bicicleta = buscarBicicleta(idBicicleta);
+        LocalDateTime inicio = Datas.ler(data);
+
+        usuario.validarInicioDeAluguel();
+        estacao.validarPossui(bicicleta);
+        bicicleta.validarRetirada(config);
+        usuario.getMetodoPagamento().validarRetirada();
+
+        String id = "A" + proximoAluguel++;
+        Aluguel aluguel = new Aluguel(id, usuario, bicicleta, estacao, inicio);
+        estacao.liberar(bicicleta);
+        bicicleta.retirar();
+        usuario.iniciarAluguel(aluguel);
+        alugueis.put(id, aluguel);
+        return id;
+    }
+
+    // ====================================================================== US8 - consulta de aluguel
+
+    public String getAtributoAluguel(String idAluguel, String atributo) {
+        return buscarAluguel(idAluguel).getAtributo(atributo);
+    }
+
     // ====================================================================== buscas
 
     private Usuario buscarUsuario(String id) {
@@ -270,6 +313,10 @@ public class Sistema implements Serializable {
 
     private Bicicleta buscarBicicleta(String id) {
         return buscar(bicicletas, id, Mensagens.ID_BICICLETA_NULO, Mensagens.BICICLETA_NAO_EXISTE);
+    }
+
+    private Aluguel buscarAluguel(String id) {
+        return buscar(alugueis, id, Mensagens.ID_ALUGUEL_NULO, Mensagens.ALUGUEL_NAO_EXISTE);
     }
 
     private static <T> T buscar(Map<String, T> mapa, String id, String mensagemIdNulo, String mensagemNaoExiste) {

@@ -2,6 +2,7 @@ package br.ufal.ic.p2.bikeshare.model.bicicleta;
 
 import br.ufal.ic.p2.bikeshare.exception.AtributoInvalidoException;
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
+import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.model.Estacao;
 import br.ufal.ic.p2.bikeshare.sistema.Configuracao;
 
@@ -36,6 +37,17 @@ public abstract class Bicicleta implements Serializable {
         return estado == EstadoBicicleta.DISPONIVEL;
     }
 
+    /**
+     * Verifica se a bicicleta pode ser retirada.
+     *
+     * @throws RegraDeNegocioException se não estiver no estado disponível
+     */
+    public void validarRetirada(Configuracao config) {
+        if (estado != EstadoBicicleta.DISPONIVEL) {
+            throw new RegraDeNegocioException(Mensagens.BICICLETA_INDISPONIVEL);
+        }
+    }
+
     public String getAtributo(String atributo) {
         return switch (atributo) {
             case "tipo" -> getTipo();
@@ -44,6 +56,12 @@ public abstract class Bicicleta implements Serializable {
             case "nivelBateria" -> getNivelBateria();
             default -> throw new AtributoInvalidoException(Mensagens.ATRIBUTO_NAO_EXISTE);
         };
+    }
+
+    /** Sai da estação e passa a estar em uso. */
+    public void retirar() {
+        estado = EstadoBicicleta.EM_USO;
+        estacao = null;
     }
 
     /** Entra numa estação (cadastro ou devolução) já com o novo estado. */

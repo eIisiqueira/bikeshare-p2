@@ -1,6 +1,7 @@
 package br.ufal.ic.p2.bikeshare.model.pagamento;
 
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
+import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.exception.ValidacaoException;
 import br.ufal.ic.p2.bikeshare.util.Validador;
 
@@ -33,5 +34,12 @@ public class SaldoPreCarregado extends MetodoPagamento {
             throw new ValidacaoException(Mensagens.VALOR_NAO_POSITIVO);
         }
         saldo = saldo.add(valor);
+    }
+
+    @Override
+    public void validarRetirada() {
+        if (saldo.signum() <= 0) {
+            throw new RegraDeNegocioException(Mensagens.SALDO_INSUFICIENTE);
+        }
     }
 }

@@ -12,9 +12,11 @@ public final class Mensagens {
     public static final String ID_USUARIO_NULO = "Identificacao do usuario nao pode ser nula.";
     public static final String ID_ESTACAO_NULO = "Identificacao da estacao nao pode ser nula.";
     public static final String ID_BICICLETA_NULO = "Identificacao da bicicleta nao pode ser nula.";
+    public static final String ID_ALUGUEL_NULO = "Identificacao do aluguel nao pode ser nula.";
     public static final String USUARIO_NAO_EXISTE = "Usuario nao existe.";
     public static final String ESTACAO_NAO_EXISTE = "Estacao nao existe.";
     public static final String BICICLETA_NAO_EXISTE = "Bicicleta nao existe.";
+    public static final String ALUGUEL_NAO_EXISTE = "Aluguel nao existe.";
     public static final String ATRIBUTO_NAO_EXISTE = "Atributo nao existe.";
     public static final String ATRIBUTO_NAO_ALTERAVEL = "Atributo nao pode ser alterado.";
 
@@ -30,6 +32,9 @@ public final class Mensagens {
     public static final String RAZAO_SOCIAL_NULA = "Razao social nao pode ser nula.";
     public static final String NAO_EH_PESSOA_FISICA = "Usuario nao eh pessoa fisica.";
     public static final String NAO_EH_PESSOA_JURIDICA = "Usuario nao eh pessoa juridica.";
+    public static final String USUARIO_COM_ALUGUEL = "Nao e possivel remover usuario com aluguel em andamento.";
+    public static final String USUARIO_JA_TEM_ALUGUEL = "Usuario ja possui um aluguel em andamento.";
+    public static final String USUARIO_INADIMPLENTE = "Usuario inadimplente.";
 
     // ---- plano ----
     public static final String PLANO_INVALIDO = "Plano invalido.";
@@ -40,6 +45,7 @@ public final class Mensagens {
 
     // ---- método de pagamento ----
     public static final String METODO_PAGAMENTO_INVALIDO = "Valor de metodo de pagamento invalido.";
+    public static final String METODO_PAGAMENTO_NAO_CADASTRADO = "Metodo de pagamento nao cadastrado.";
     public static final String NAO_USA_CARTAO = "Usuario nao usa cartao.";
     public static final String NAO_USA_PIX = "Usuario nao usa pix.";
     public static final String NAO_USA_SALDO = "Usuario nao usa saldo pre-carregado.";
@@ -50,6 +56,7 @@ public final class Mensagens {
     public static final String VALOR_NULO = "Valor nao pode ser nulo.";
     public static final String VALOR_NAO_NUMERICO = "Valor deve ser numerico.";
     public static final String VALOR_NAO_POSITIVO = "Valor deve ser positivo.";
+    public static final String SALDO_INSUFICIENTE = "Saldo insuficiente.";
 
     // ---- estação ----
     public static final String ENDERECO_NULO = "Endereco nao pode ser nulo.";
@@ -61,8 +68,15 @@ public final class Mensagens {
     // ---- bicicleta ----
     public static final String BICICLETA_JA_EXISTE = "Bicicleta ja existe.";
     public static final String BICICLETA_FORA_DA_ESTACAO = "Bicicleta nao esta nesta estacao.";
+    public static final String BICICLETA_INDISPONIVEL = "Bicicleta nao esta disponivel.";
     public static final String SEM_BATERIA = "Bicicleta nao possui bateria.";
     public static final String BATERIA_NULA = "Nivel de bateria nao pode ser nulo.";
     public static final String BATERIA_NAO_NUMERICA = "Nivel de bateria deve ser numerico.";
     public static final String BATERIA_FORA_DO_INTERVALO = "Nivel de bateria deve estar entre 0 e 100.";
+    public static final String BATERIA_INSUFICIENTE = "Nivel de bateria insuficiente.";
+
+    // ---- aluguel / datas ----
+    public static final String DATA_NULA = "Data nao pode ser nula.";
+    public static final String DATA_INVALIDA = "Data invalida.";
+    public static final String ALUGUEL_EM_ANDAMENTO = "Aluguel ainda esta em andamento.";
 }
