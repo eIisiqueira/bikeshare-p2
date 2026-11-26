@@ -7,6 +7,7 @@ import br.ufal.ic.p2.bikeshare.model.Estacao;
 import br.ufal.ic.p2.bikeshare.sistema.Configuracao;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Bicicleta compartilhada. A base define o comportamento da bicicleta convencional;
@@ -30,6 +31,11 @@ public abstract class Bicicleta implements Serializable {
 
     public String getNivelBateria() {
         throw new AtributoInvalidoException(Mensagens.SEM_BATERIA);
+    }
+
+    /** Valor extra cobrado por minuto de uso. Convencional: zero. */
+    public BigDecimal adicionalPorMinuto(Configuracao config) {
+        return BigDecimal.ZERO;
     }
 
     /** Se a bicicleta entra na contagem de "disponíveis" da estação. */

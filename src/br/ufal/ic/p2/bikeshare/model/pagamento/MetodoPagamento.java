@@ -43,4 +43,12 @@ public abstract class MetodoPagamento implements Serializable {
     /** Verifica se o usuário pode iniciar uma corrida com este método. Padrão: pode. */
     public void validarRetirada() {
     }
+
+    /** Verifica, sem alterar nada, se o valor pode ser cobrado. Padrão: sempre pode. */
+    public void validarCobranca(BigDecimal valor) {
+    }
+
+    /** Efetiva a cobrança. Padrão: nada a fazer aqui (cobrança externa — cartão/pix). */
+    public void cobrar(BigDecimal valor) {
+    }
 }

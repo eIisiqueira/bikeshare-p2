@@ -45,6 +45,21 @@ public class Plano implements Serializable {
     }
 
     /**
+     * Calcula o valor de uma corrida.
+     *
+     * @param minutos            duração da corrida
+     * @param adicionalPorMinuto adicional do tipo de bicicleta (zero para convencional);
+     *                           é cobrado em todos os minutos, mesmo dentro da franquia
+     * @return (minutos além da franquia × valor excedente) + (minutos × adicional)
+     */
+    public BigDecimal calcularValor(long minutos, BigDecimal adicionalPorMinuto) {
+        long excedentes = Math.max(0, minutos - franquiaMinutos);
+        BigDecimal tarifa = valorMinutoExcedente.multiply(BigDecimal.valueOf(excedentes));
+        BigDecimal adicional = adicionalPorMinuto.multiply(BigDecimal.valueOf(minutos));
+        return tarifa.add(adicional);
+    }
+
+    /**
      * Interpreta a mensalidade informada ao contratar este plano.
      *
      * @return a mensalidade contratada, ou {@code null} se o plano não tem mensalidade

@@ -64,6 +64,7 @@ public final class Mensagens {
     public static final String CAPACIDADE_NAO_NUMERICA = "Capacidade deve ser numerica.";
     public static final String CAPACIDADE_NAO_POSITIVA = "Capacidade deve ser positiva.";
     public static final String ESTACAO_SEM_VAGAS = "Estacao sem vagas disponiveis.";
+    public static final String ESTACAO_CHEIA = "Estacao cheia.";
 
     // ---- bicicleta ----
     public static final String BICICLETA_JA_EXISTE = "Bicicleta ja existe.";
@@ -78,5 +79,7 @@ public final class Mensagens {
     // ---- aluguel / datas ----
     public static final String DATA_NULA = "Data nao pode ser nula.";
     public static final String DATA_INVALIDA = "Data invalida.";
+    public static final String DEVOLUCAO_ANTES_DA_RETIRADA = "Data de devolucao anterior a data de retirada.";
     public static final String ALUGUEL_EM_ANDAMENTO = "Aluguel ainda esta em andamento.";
+    public static final String ALUGUEL_NAO_EM_ANDAMENTO = "Aluguel nao esta em andamento.";
 }

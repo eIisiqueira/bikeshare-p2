@@ -295,7 +295,15 @@ public class Sistema implements Serializable {
         return id;
     }
 
-    // ====================================================================== US8 - consulta de aluguel
+    // ====================================================================== US9 - devolução
+
+    /** Devolve a bicicleta de um aluguel; o cálculo e as regras de fim de corrida ficam em {@link Aluguel#devolver}. */
+    public void devolverBicicleta(String idAluguel, String idEstacao, String data) {
+        Aluguel aluguel = buscarAluguel(idAluguel);
+        Estacao destino = buscarEstacao(idEstacao);
+        LocalDateTime fim = Datas.ler(data);
+        aluguel.devolver(destino, fim, config);
+    }
 
     public String getAtributoAluguel(String idAluguel, String atributo) {
         return buscarAluguel(idAluguel).getAtributo(atributo);

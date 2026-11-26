@@ -145,10 +145,21 @@ public abstract class Usuario implements Serializable {
         historico.add(aluguel);
     }
 
+    public void encerrarAluguel() {
+        aluguelAtivo = null;
+    }
+
+    /** Lança uma penalidade não quitada: soma às pendências e torna o usuário inadimplente. */
+    public void aplicarPenalidade(BigDecimal valor) {
+        pendencias = pendencias.add(valor);
+        estado = EstadoUsuario.INADIMPLENTE;
+    }
+
     // ---------------------------------------------------------------- getters/setters simples
 
     public String getId() { return id; }
     public String getEmail() { return email; }
+    public Plano getPlano() { return plano; }
     public MetodoPagamento getMetodoPagamento() { return metodoPagamento; }
     public List<Aluguel> getHistorico() { return historico; }
 

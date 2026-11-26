@@ -4,12 +4,15 @@ import br.ufal.ic.p2.bikeshare.exception.AtributoInvalidoException;
 import br.ufal.ic.p2.bikeshare.exception.Mensagens;
 import br.ufal.ic.p2.bikeshare.exception.RegraDeNegocioException;
 import br.ufal.ic.p2.bikeshare.model.bicicleta.Bicicleta;
+import br.ufal.ic.p2.bikeshare.model.bicicleta.EstadoBicicleta;
 import br.ufal.ic.p2.bikeshare.model.usuario.Usuario;
+import br.ufal.ic.p2.bikeshare.sistema.Configuracao;
 import br.ufal.ic.p2.bikeshare.util.Datas;
 import br.ufal.ic.p2.bikeshare.util.Formatador;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -35,6 +38,53 @@ public class Aluguel implements Serializable {
         this.bicicleta = bicicleta;
         this.estacaoOrigem = estacaoOrigem;
         this.inicio = inicio;
+    }
+
+    /**
+     * Devolve a bicicleta e encerra o aluguel. Todas as validações vêm antes de qualquer alteração.
+     * <ul>
+     *   <li>passou do tempo máximo → {@code expirado}: sem tarifa, penalidade automática,
+     *       usuário inadimplente e bicicleta em manutenção;</li>
+     *   <li>mesma estação dentro da carência → {@code cancelado}, sem cobrança;</li>
+     *   <li>senão → {@code finalizado}, valor calculado pelo plano do usuário e cobrado no método de pagamento.</li>
+     * </ul>
+     *
+     * @throws RegraDeNegocioException aluguel não está em andamento, data anterior à retirada,
+     *                                 estação cheia ou saldo insuficiente (nesses casos nada muda)
+     */
+    public void devolver(Estacao destino, LocalDateTime dataFim, Configuracao config) {
+        if (estado != EstadoAluguel.EM_ANDAMENTO) {
+            throw new RegraDeNegocioException(Mensagens.ALUGUEL_NAO_EM_ANDAMENTO);
+        }
+        if (dataFim.isBefore(inicio)) {
+            throw new RegraDeNegocioException(Mensagens.DEVOLUCAO_ANTES_DA_RETIRADA);
+        }
+        if (!destino.temVaga()) {
+            throw new RegraDeNegocioException(Mensagens.ESTACAO_CHEIA);
+        }
+        long minutos = Duration.between(inicio, dataFim).toMinutes();
+
+        if (minutos > config.getTempoMaximoMinutos()) {
+            usuario.aplicarPenalidade(config.getPenalidadeAtraso());
+            encerrar(destino, dataFim, EstadoAluguel.EXPIRADO, EstadoBicicleta.EM_MANUTENCAO, BigDecimal.ZERO);
+        } else if (destino == estacaoOrigem && minutos <= config.getCarenciaMinutos()) {
+            encerrar(destino, dataFim, EstadoAluguel.CANCELADO, EstadoBicicleta.DISPONIVEL, BigDecimal.ZERO);
+        } else {
+            BigDecimal valor = usuario.getPlano().calcularValor(minutos, bicicleta.adicionalPorMinuto(config));
+            usuario.getMetodoPagamento().validarCobranca(valor);
+            usuario.getMetodoPagamento().cobrar(valor);
+            encerrar(destino, dataFim, EstadoAluguel.FINALIZADO, EstadoBicicleta.DISPONIVEL, valor);
+        }
+    }
+
+    private void encerrar(Estacao destino, LocalDateTime dataFim, EstadoAluguel estadoFinal,
+                          EstadoBicicleta estadoBicicleta, BigDecimal valor) {
+        this.fim = dataFim;
+        this.estacaoDestino = destino;
+        this.valorCobrado = valor;
+        this.estado = estadoFinal;
+        destino.receber(bicicleta, estadoBicicleta);
+        usuario.encerrarAluguel();
     }
 
     /**
